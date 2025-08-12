@@ -9,13 +9,14 @@ import pandas as pd
 import psutil
 import time
 
-MONITORED_SCRIPT = "bot.py"
+MONITORED_SCRIPT = "Reselection11_Trial.py"
 CHECK_INTERVAL = 10  # seconds
 
 def is_bot_running(script_name):
     for proc in psutil.process_iter(["pid", "name", "cmdline"]):
         try:
-            if "python" in proc.info["name"].lower() and script_name in proc.info["cmdline"]:
+            if "python" in (proc.info["name"] or "").lower() and any(script_name in arg for arg in proc.info["cmdline"] or []):
+
                 return True
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
@@ -103,7 +104,7 @@ if __name__ == "__main__":
                 print(f"{MONITORED_SCRIPT} is NOT running!")
                 if send_mail_triggerd == False:
                     print("mail send triggered")
-                    send_email_alert("Error occurred, bot stopped running", "We encountered an error", "vgangula@orthomedstaffing.com")
+                    send_email_alert("Error occurred, bot stopped running", "We encountered an error, Bot stop running", "vgangula@orthomedstaffing.com")
                 send_mail_triggerd = True
             time.sleep(CHECK_INTERVAL)
     except KeyboardInterrupt:
